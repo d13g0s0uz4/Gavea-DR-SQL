@@ -1,0 +1,439 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "existingSubnetID": {
+      "type": "string",
+      "defaultValue": "/subscriptions/be7e27bc-08d7-4bc3-8d97-3d4e6e0476e7/resourceGroups/rg-gavea-infra/providers/Microsoft.Network/virtualNetworks/gavea001/subnets/gavea-intranet-01",
+      "metadata": {
+        "description": "Existing subnet ID to deploy VM, this subnet must have connectivity with AD Domain"
+      }
+    },
+    "virtualMachineName": {
+      "type": "string",
+      "defaultValue": "dbbcm02",
+      "metadata": {
+        "description": "Unique hostname for VM deployment. Up to 62 chars, digits or dashes, lowercase, should start with a letter: must conform to '^[a-z][a-z0-9-]{1,61}[a-z0-9]$'."
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_F8s",
+      "metadata": {
+        "description": "The size of the virtual machines"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL Server Virtual Machine Storage Account Type"
+      },
+      "allowedValues": [
+        "Premium_LRS",
+        "Standard_LRS"
+      ],
+      "defaultValue": "Premium_LRS"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "New SQL Server Virtual Machine Storage Account name"
+      },
+      "defaultValue": "stgdbbcm02"
+    },
+    "domainToJoin": {
+      "type": "string",
+      "defaultValue": "gavea.local",
+      "metadata": {
+        "description": "The FQDN of the AD domain"
+      }
+    },
+    "domainUsername": {
+      "type": "string",
+      "defaultValue": "adm_dsouza",
+      "metadata": {
+        "description": "Username of the account used to join the VM on the existing domain"
+      }
+    },
+    "domainPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Password of the account used to join the VM on the existing domain"
+      }
+    },
+    "ouPath": {
+      "type": "string",
+      "defaultValue": "\"OU=Azure-VNet111;OU=Servers;OU=Gavea;DC=Gavea;DC=Local\"",
+      "metadata": {
+        "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: \"OU=testOU; DC=domain; DC=Domain; DC=com\""
+      }
+    },
+    "domainJoinOptions": {
+      "type": "int",
+      "defaultValue": 3,
+      "metadata": {
+        "description": "Set of bit flags that define the join options. Default value of 3 is a combination of NETSETUP_JOIN_DOMAIN (0x00000001) & NETSETUP_ACCT_CREATE (0x00000002) i.e. will join the domain and create the account on the domain. For more information see https://msdn.microsoft.com/en-us/library/aa392154(v=vs.85).aspx"
+      }
+    },
+    "vmAdminUsername": {
+      "type": "string",
+      "defaultValue": "gavea_adm",
+      "metadata": {
+        "description": "The name of the local administrator of the new VM. Exclusion list: 'admin','administrator"
+      }
+    },
+    "vmAdminPassword": {
+      "type": "securestring",
+      "defaultValue": "Changeme@123456!",
+      "metadata": {
+        "description": "The password for the administrator account of the new VM"
+      }
+    },
+    "sqlConnectivityType": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL Server Virtual Machine SQL Connectivity Type"
+      },
+      "defaultValue": "Private"
+    },
+    "sqlPortNumber": {
+      "type": "int",
+      "metadata": {
+        "description": "SQL Server Virtual Machine SQL Port Number"
+      },
+      "defaultValue": 1433
+    },
+    "sqlStorageDisksCount": {
+      "type": "int",
+      "metadata": {
+        "description": "SQL Server Virtual Machine Data Disk Count"
+      },
+      "defaultValue": 2
+    },
+    "sqlStorageWorkloadType": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL Server Virtual Machine Workload Type: GENERAL - general work load; DW - datawear house work load; OLTP - Transactional processing work load"
+      },
+      "allowedValues": [
+        "GENERAL",
+        "OLTP",
+        "DW"
+      ],
+      "defaultValue": "GENERAL"
+    },
+    "sqlAuthenticationLogin": {
+      "type": "string",
+      "metadata": {
+        "description": "SQL Server Authentication Login Account Name"
+      },
+      "defaultValue": "sa_gavea"
+    },
+    "sqlAuthenticationPassword": {
+      "type": "securestring",
+      "defaultValue": "Changeme@123456!",
+      "metadata": {
+        "description": "SQL Server Authentication Login Account Password"
+      }
+    },
+    "UName": {
+      "type": "string",
+      "defaultValue": "GAVEA\\_svDatabase",
+      "metadata": {
+        "description": "Windows Service account used by MSSQLSERVER and SQLSERVERAGENT services name"
+      }
+    },
+    "PWord": {
+      "type": "securestring",
+      "defaultValue": "Changeme@123456!",
+      "metadata": {
+        "description": "Windows Service account used by MSSQLSERVER and SQLSERVERAGENT services Password"
+      }
+    },
+    "newpath": {
+      "type": "string",
+      "defaultValue": "F:\\TempDB\\",
+      "metadata": {
+        "description": "New path to move TEPDB data and log files"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "brazilsouth",
+      "metadata": {
+        "description": "Azure Location for all resources."
+      }
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "The base URI where powershell script required by this template are located. When the template is deployed using the accompanying scripts."
+      },
+      "defaultValue": "https://gaveascripts.blob.core.windows.net/powershell"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The sasToken required to access URI."
+      },
+      "defaultValue": "Changeme@123456!"
+    }
+    },
+  "variables": {
+    "storageAccountName": "[parameters('storageAccountName')]",
+    "storageAccountNameBootDiag": "[concat(parameters('storageAccountName'),'bdiag')]",
+    "imagePublisher": "MicrosoftSQLServer",
+    "imageOffer": "SQL2014SP2-WS2012R2",
+    "sku": "Standard",
+    "nicName": "[concat(parameters('virtualMachineName'),'Nic01')]",
+    "subnetId": "[parameters('existingSubnetID')]",
+    "scriptFolder": ".",
+    "scriptFileName": "Gavea-SQL-BCM.ps1",
+    "fileToBeCopied": "FileToBeCopied.txt",
+    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -newpath ', '\"', parameters('newpath'), '\"')]"
+  },
+  "resources": [
+   
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountNameBootDiag')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "accountType": "Standard_LRS"
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('nicName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetId')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "2017-03-30",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('virtualMachineName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts',variables('storageAccountName'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('virtualMachineName')]",
+          "adminUsername": "[parameters('vmAdminUsername')]",
+          "adminPassword": "[parameters('vmAdminPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": "False",
+            "timeZone": "E. South America Standard Time"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[variables('sku')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('virtualMachineName'),'_OsDisk')]",
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "[parameters('storageAccountType')]"
+            }
+          },
+          "dataDisks": [
+            {
+              "name": "[concat(parameters('virtualMachineName'),'_dataDisk1')]",
+              "createOption": "Empty",
+              "managedDisk": {
+                "storageAccountType": "[parameters('storageAccountType')]"
+              },
+              "diskSizeGB": "1023",
+              "caching": "ReadOnly",
+              "lun": 0
+            },
+            {
+              "name": "[concat(parameters('virtualMachineName'),'_dataDisk2')]",
+              "caching": "ReadOnly",
+              "createOption": "Empty",
+              "managedDisk": {
+                "storageAccountType": "[parameters('storageAccountType')]"
+              },
+              "diskSizeGB": "1023",
+              "lun": 1
+            }
+          ]
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true",
+            "storageUri": "[reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameBootDiag')), '2015-06-15').primaryEndpoints.blob]"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachineName'), '/SqlIaasExtension')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+      ],
+      "properties": {
+        "type": "SqlIaaSAgent",
+        "publisher": "Microsoft.SqlServer.Management",
+        "typeHandlerVersion": "1.2",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "AutoTelemetrySettings": {
+            "Region": "[parameters('location')]"
+          }
+        }
+      
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "name": "prepareSqlVmDeployment",
+      "apiVersion": "2015-11-01",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'),'/extensions/SqlIaasExtension')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://gaveascripts.blob.core.windows.net/mssql/preparingSqlServerSa.json?sp=r&st=2018-07-06T12:43:23Z&se=2018-07-06T20:43:23Z&spr=https&sv=2017-11-09&sig=qe6Z4TMNXTYssPehu%2FaqyB%2B3ev%2B%2FMPOZnA6eYkD3haI%3D&sr=b"
+        },
+        "parameters": {
+          "sqlVMName": {
+            "value": "[parameters('virtualMachineName')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('vmadminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('vmadminPassword')]"
+          },
+          "sqlUsername": {
+            "value": "[parameters('sqlAuthenticationLogin')]"
+          },
+          "sqlPassword": {
+            "value": "[parameters('sqlAuthenticationPassword')]"
+          },
+          "disksCount": {
+            "value": "[parameters('sqlStorageDisksCount')]"
+          },
+          "diskSizeInGB": {
+            "value": 1023
+          },
+          "sqlEnginePort": {
+            "value": "[parameters('sqlPortNumber')]"
+          },
+          "workloadType": {
+            "value": "[parameters('sqlStorageWorkloadType')]"
+          },
+          "connectionType": {
+            "value": "[parameters('sqlConnectivityType')]"
+          },
+          "sqlVMPrepareModulesURL": {
+            "value": "https://gaveascripts.blob.core.windows.net/mssql/preparingSqlServerSa.json?sp=r&st=2018-07-06T12:44:36Z&se=2018-07-06T20:44:36Z&spr=https&sv=2017-11-09&sig=a31S%2F7NyBSgO6IftjibjALSm6NYsf4a55ZhUDVfemu4%3D&sr=b"
+          },
+          "sqlVMPrepareConfigurationFunction": {
+            "value": "PrepareSqlServerSa.ps1\\PrepareSqlServerSa"
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachineName'),'/joindomain')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'prepareSqlVmDeployment')]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "JsonADDomainExtension",
+        "typeHandlerVersion": "1.3",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "Name": "[parameters('domainToJoin')]",
+          "OUPath": "[parameters('ouPath')]",
+          "User": "[concat(parameters('domainToJoin'), '\\', parameters('domainUsername'))]",
+          "Restart": "true",
+          "Options": "[parameters('domainJoinOptions')]"
+        },
+        "protectedSettings": {
+          "Password": "[parameters('domainPassword')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('virtualMachineName'),'/config-app')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'),'/extensions/joindomain')]"
+      ],
+      "properties": {
+          "publisher": "Microsoft.Compute",
+          "type": "CustomScriptExtension",
+          "typeHandlerVersion": "1.9",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+              "fileUris": [
+                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+              ],
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
+          }
+      }
+  }
+  ],
+  "outputs": {
+    "adminUsername": {
+      "type": "string",
+      "value": "[parameters('vmadminUsername')]"
+    }
+  }
+}
