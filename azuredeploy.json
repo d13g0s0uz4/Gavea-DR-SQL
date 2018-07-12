@@ -168,16 +168,16 @@
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
-        "description": "The base URI where powershell script required by this template are located. When the template is deployed using the accompanying scripts."
+        "description": "The base URI where powershell script to update sql used. When the template is deployed using the accompanying scripts."
       },
-      "defaultValue": "https://gaveascripts.blob.core.windows.net/powershell"
+      "defaultValue": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
       "metadata": {
-        "description": "The sasToken required to access URI."
+        "description": "The sasToken required to access the powershell script URI, if required."
       },
-      "defaultValue": "Changeme@123456!"
+      "defaultValue": ""
     }
     },
   "variables": {
@@ -190,7 +190,6 @@
     "subnetId": "[parameters('existingSubnetID')]",
     "scriptFolder": ".",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
-    "fileToBeCopied": "FileToBeCopied.txt",
     "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -newpath ', '\"', parameters('newpath'), '\"')]"
   },
   "resources": [
@@ -338,7 +337,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://gaveascripts.blob.core.windows.net/mssql/preparingSqlServerSa.json?sp=r&st=2018-07-06T12:43:23Z&se=2018-07-06T20:43:23Z&spr=https&sv=2017-11-09&sig=qe6Z4TMNXTYssPehu%2FaqyB%2B3ev%2B%2FMPOZnA6eYkD3haI%3D&sr=b"
+          "uri": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master/nested/preparingSqlServerSa.json"
         },
         "parameters": {
           "sqlVMName": {
