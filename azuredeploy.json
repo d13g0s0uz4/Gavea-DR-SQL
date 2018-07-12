@@ -18,7 +18,7 @@
     },
     "vmSize": {
       "type": "string",
-      "defaultValue": "Standard_F8s",
+      "defaultValue": "Standard_E16s_v3",
       "metadata": {
         "description": "The size of the virtual machines"
       }
@@ -78,14 +78,14 @@
     },
     "vmAdminUsername": {
       "type": "string",
-      "defaultValue": "gavea_adm",
+      "defaultValue": "adm_gavea",
       "metadata": {
         "description": "The name of the local administrator of the new VM. Exclusion list: 'admin','administrator"
       }
     },
     "vmAdminPassword": {
       "type": "securestring",
-      "defaultValue": "Changeme@123456!",
+      "defaultValue": "",
       "metadata": {
         "description": "The password for the administrator account of the new VM"
       }
@@ -132,7 +132,7 @@
     },
     "sqlAuthenticationPassword": {
       "type": "securestring",
-      "defaultValue": "Changeme@123456!",
+      "defaultValue": "",
       "metadata": {
         "description": "SQL Server Authentication Login Account Password"
       }
@@ -146,7 +146,7 @@
     },
     "PWord": {
       "type": "securestring",
-      "defaultValue": "Changeme@123456!",
+      "defaultValue": "",
       "metadata": {
         "description": "Windows Service account used by MSSQLSERVER and SQLSERVERAGENT services Password"
       }
