@@ -374,7 +374,7 @@
             "value": "[parameters('sqlConnectivityType')]"
           },
           "sqlVMPrepareModulesURL": {
-            "value": "https://gaveascripts.blob.core.windows.net/mssql/preparingSqlServerSa.json?sp=r&st=2018-07-06T12:44:36Z&se=2018-07-06T20:44:36Z&spr=https&sv=2017-11-09&sig=a31S%2F7NyBSgO6IftjibjALSm6NYsf4a55ZhUDVfemu4%3D&sr=b"
+            "value": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master/nested/preparingSqlServerSa.json"
           },
           "sqlVMPrepareConfigurationFunction": {
             "value": "PrepareSqlServerSa.ps1\\PrepareSqlServerSa"
