@@ -5,11 +5,11 @@
    This script will:
    1- Update/change MSSQLSERVER/MSSQLAGENT Windows service account (restart SQL and Agent services)
    2- Add local\Administrators group as sa (restart SQL and Agent services)
-   3- Move SQL TempDB data and log file to a new drive/folder (F:\) (restart SQL and Agent services)
+   3- Run sql-cmd tempdb.sql for details (restart SQL and Agent services)
 .EXAMPLE
-   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -newpath "F:\TempDB\"
+   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!"
 .INPUTS
-   -UName "Domain\user" -PWord "P@ssw0rd!" -newpath "F:\TempDB\"
+   -UName "Domain\user" -PWord "P@ssw0rd!"
 .OUTPUTS
    NONE
 .NOTES
@@ -22,15 +22,14 @@
 
 Param (
     [string]$UName,
-    [string]$PWord,
-    [string]$newpath = "F:\TempDB\"
+    [string]$PWord
 )
 
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | out-null
 $ErrorActionPreference="continue"
 
 $Server = $env:COMPUTERNAME #Enter the name of SQL Server Instance
-
+New-Item -Path "C:\WindowsAzure\Logs\Gavea-SQL-BCM" -ItemType directory | Out-Null
 function log($string, $color)
 {
 if ($Color -eq $null) {$color = "white"}
@@ -108,40 +107,17 @@ function addlocaladministrators {
 }
 
 
-function changetempdbpath {
-    log "Starting Function 'changetempdbpath' to move TEMPDB data and log files to new location" red
-    log "Creating folder $newpath" green
-    try {
-        New-Item -Path $newpath -ItemType directory | Out-Null
-        }
-    catch {
-        log "$newpath already exists" green
-    }
-
-    #$TempDBfile = 'FILENAME = "F:\TempDB\tempdb.mdf"'
-    #$TempLogfile = 'FILENAME = "F:\TempDB\tempdb.ldf"'
-    $TempDB = $newpath + "tempdb.mdf"
-    $TempDB = "'$TempDB'"
-    $TempLog = $newpath + "tempdb.ldf"
-    $TempLog = "'$TempLog'"
-    # End Data entry section
-    #
-    #$TempDB = "N'" + $newpathDBLoc + "'" # This format is needed for Invoke-SQLCMD
-    #$TempLog = "N'" + $newpathLogLoc + "'"
-    
-    # Import-Module SQLPS # See notes..
-    log "Modifying Temp DB and Log location.." green
-    log "Temp DB data file new path: $TempDB" green
-    log "Temp DB log file new path: $TempLog" green
-    Invoke-SQLCMD -Query "USE [master]"
-    Invoke-SQLCMD -Query "ALTER DATABASE TempDB MODIFY FILE (NAME = tempdev, FILENAME = $TempDB ) "
-    Invoke-SQLCMD -Query "ALTER DATABASE TempDB MODIFY FILE (NAME = templog, FILENAME = $TempLog ) "
-    Set-Location -Path ($logfile.Split(":")[0] + ":")
+function runsqlscript {
+    log "Starting Function 'runsqlscript' to move TEMPDB data and log files to new location" red
+    log "Creating folder F:\TempDB\" green
+    New-Item -Path "F:\TempDB\" -ItemType directory | Out-Null
+    log 'starting sql script Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript.rpt"' green
+    Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript.sql" | Out-File -FilePath "C:\Temp\sqlscript.rpt" green
     log "Restaring SQL Service.." green
     Restart-Service MSSQLSERVER -Force
 }
 
 changesvcaccount
 addlocaladministrators
-changetempdbpath
+runsqlscript
 log "Finished Gavea-SQL-BCM script" red
