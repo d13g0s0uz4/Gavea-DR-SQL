@@ -164,13 +164,6 @@
         "description": "The base URI where powershell script to update sql used. When the template is deployed using the accompanying scripts."
       },
       "defaultValue": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master"
-    },
-    "_artifactsLocationSasToken": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The sasToken required to access the powershell script URI, if required."
-      },
-      "defaultValue": ""
     }
     },
   "variables": {
@@ -182,10 +175,9 @@
     "nicName": "[concat(parameters('virtualMachineName'),'Nic01')]",
     "subnetId": "[parameters('existingSubnetID')]",
     "scriptFolder": ".",
-    "sqlscriptFolder": "sqlscript",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
     "sqlscriptFileName": "Gavea-sqlscript.sql",
-    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'), ' -artifactsLocationSasToken \"', parameters('_artifactsLocationSasToken'), '\" -folderName ', variables('sqlscriptFolder'), ' -fileToInstall ', variables('sqlscriptFileName'))]"
+    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'))]"
   },
   "resources": [
    
@@ -417,7 +409,7 @@
           "autoUpgradeMinorVersion": true,
           "settings": {
               "fileUris": [
-                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'))]"
               ],
               "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
           }

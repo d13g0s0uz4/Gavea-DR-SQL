@@ -23,10 +23,8 @@
 Param (
     [string]$UName,
     [string]$PWord,
-    [string]$artifactsLocation = "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master",
-    [string]$artifactsLocationSasToken = "",
-    [string]$folderName = "sqlscript",
-    [string]$fileToInstall = "Gavea-sqlscript.sql"
+    [string]$artifactsLocation = "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master"
+
 )
 
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | out-null
@@ -111,23 +109,24 @@ function addlocaladministrators {
 }
 
 function downloadscript {
-
-$source = $artifactsLocation + "\$fileToInstall" + $artifactsLocationSasToken
-$dest = "C:\WindowsAzure\$folderName"
-New-Item -Path $dest -ItemType directory
-Invoke-WebRequest $source -OutFile "$dest\$fileToInstall"
+    $fileToInstall = "Gavea-sqlscript.sql"
+    $source = $artifactsLocation + "/" + $fileToInstall
+    $dest = "C:\WindowsAzure\sqlscript"
+    New-Item -Path $dest -ItemType directory
+    Invoke-WebRequest $source -OutFile "$dest\$fileToInstall"
 }
 function runsqlscript {
     log "Starting Function 'runsqlscript' to move TEMPDB data and log files to new location" red
     log "Creating folder F:\TempDB\" green
     New-Item -Path "F:\TempDB\" -ItemType directory | Out-Null
-    log 'starting sql script Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript.rpt"' green
-    Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript.sql" | Out-File -FilePath "C:\Temp\sqlscript.rpt" green
-    log "Restaring SQL Service.." green
+    log 'starting sql script Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript\Gavea-sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript\Gavea-sqlscript.rpt"' green
+    Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript\Gavea-sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript\Gavea-sqlscript.rpt" green
+    log "Restaring SQL Service to apply new tempdb location.." green
     Restart-Service MSSQLSERVER -Force
 }
 
 changesvcaccount
 addlocaladministrators
+downloadscript
 runsqlscript
 log "Finished Gavea-SQL-BCM script" red
