@@ -98,7 +98,7 @@ function addlocaladministrators {
     NET START MSSQLSERVER /mSQLCMD 
     #Start-Service MSSQLSERVER /mSQLCMD
     log "Running SQLCMD to add Administrators as sysadmin" green
-    SQLCMD -S $Server -Q "if not exists(select * from sys.server_principals where name='BUILTIN\administrators') CREATE LOGIN [BUILTIN\administrators] FROM WINDOWS;EXEC master..sp_addsrvrolemember @loginame = N'BUILTIN\administrators', @rolename = N'sysadmin'" 
+    SQLCMD -S $Server -Q "if not exists(select * from sys.server_principals where name='BUILTIN\administrators') CREATE LOGIN [BUILTIN\administrators] FROM WINDOWS;EXEC master..sp_addsrvrolemember @loginame = N'BUILTIN\administrators', @rolename = N'sysadmin'"
     log "Restarting MSSQLSERVER service" green
     Restart-Service MSSQLSERVER -Force
     log "Starting SQLSERVERAGENT service" green
@@ -120,13 +120,13 @@ function runsqlscript {
     log "Creating folder F:\TempDB\" green
     New-Item -Path "F:\TempDB\" -ItemType directory | Out-Null
     log 'starting sql script Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript\Gavea-sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript\Gavea-sqlscript.rpt"' green
-    Invoke-SQLCMD -InputFile "C:\WindowsAzure\sqlscript\Gavea-sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript\Gavea-sqlscript.rpt" green
+    SQLCMD -S $Server -InputFile "C:\WindowsAzure\sqlscript\Gavea-sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript\Gavea-sqlscript.rpt" green
     log "Restaring SQL Service to apply new tempdb location.." green
     Restart-Service MSSQLSERVER -Force
 }
 
+downloadscript
 changesvcaccount
 addlocaladministrators
-downloadscript
 runsqlscript
 log "Finished Gavea-SQL-BCM script" red
