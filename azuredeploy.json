@@ -151,13 +151,6 @@
         "description": "Windows Service account used by MSSQLSERVER and SQLSERVERAGENT services Password"
       }
     },
-    "newpath": {
-      "type": "string",
-      "defaultValue": "F:\\TempDB\\",
-      "metadata": {
-        "description": "New path to move TEPDB data and log files"
-      }
-    },
     "location": {
       "type": "string",
       "defaultValue": "brazilsouth",
@@ -190,7 +183,8 @@
     "subnetId": "[parameters('existingSubnetID')]",
     "scriptFolder": ".",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
-    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -newpath ', '\"', parameters('newpath'), '\"')]"
+    "sqlscriptFileName": "Gavea-sqlscript.sql",
+    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'))]"
   },
   "resources": [
    
@@ -249,7 +243,7 @@
           "adminUsername": "[parameters('vmAdminUsername')]",
           "adminPassword": "[parameters('vmAdminPassword')]",
           "windowsConfiguration": {
-            "enableAutomaticUpdates": "False",
+            "enableAutomaticUpdates": false,
             "timeZone": "E. South America Standard Time"
           }
         },
@@ -300,7 +294,7 @@
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
-            "enabled": "true",
+            "enabled": true,
             "storageUri": "[reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountNameBootDiag')), '2015-06-15').primaryEndpoints.blob]"
           }
         }
@@ -330,7 +324,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "name": "prepareSqlVmDeployment",
-      "apiVersion": "2015-11-01",
+      "apiVersion": "2015-01-01",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'),'/extensions/SqlIaasExtension')]"
       ],
@@ -374,7 +368,7 @@
             "value": "[parameters('sqlConnectivityType')]"
           },
           "sqlVMPrepareModulesURL": {
-            "value": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master/nested/preparingSqlServerSa.json"
+            "value": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master/scripts/PrepareSqlServer.ps1.zip"
           },
           "sqlVMPrepareConfigurationFunction": {
             "value": "PrepareSqlServerSa.ps1\\PrepareSqlServerSa"
@@ -422,7 +416,8 @@
           "autoUpgradeMinorVersion": true,
           "settings": {
               "fileUris": [
-                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]",
+                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('sqlScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
               "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
           }
