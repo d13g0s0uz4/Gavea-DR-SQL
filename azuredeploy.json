@@ -374,7 +374,7 @@
             "value": "[parameters('sqlConnectivityType')]"
           },
           "sqlVMPrepareModulesURL": {
-            "value": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master/scripts/PrepareSqlServer.ps1.zip"
+            "value": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master/nested/preparingSqlServerSa.json"
           },
           "sqlVMPrepareConfigurationFunction": {
             "value": "PrepareSqlServerSa.ps1\\PrepareSqlServerSa"
