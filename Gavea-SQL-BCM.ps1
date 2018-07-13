@@ -120,7 +120,7 @@ function runsqlscript {
     log "Creating folder F:\TempDB\" green
     New-Item -Path "F:\TempDB\" -ItemType directory | Out-Null
     log 'starting sql script Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript\Gavea-sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript\Gavea-sqlscript.rpt"' green
-    Invoke-Sqlcmd -InputFile "C:\WindowsAzure\sqlscript\Gavea-sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript\Gavea-sqlscript.rpt" green
+    Invoke-SQLCMD -InputFile "C:\WindowsAzure\sqlscript\Gavea-sqlscript.sql" | Out-File -FilePath "C:\WindowsAzure\sqlscript\Gavea-sqlscript.rpt" green
     log "Restaring SQL Service to apply new tempdb location.." green
     Restart-Service MSSQLSERVER -Force
 }
