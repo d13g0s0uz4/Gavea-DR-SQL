@@ -7,7 +7,7 @@
    2- Add local\Administrators group as sa (restart SQL and Agent services)
    3- Run sql-cmd tempdb.sql for details (restart SQL and Agent services)
 .EXAMPLE
-   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master" -folderName "." -fileToInstall "Gavea-sqlscript.sql" -artifactsLocationSasToken ""
+   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master" -artifactsLocationSasToken "" -folderName "." -fileToInstall "Gavea-sqlscript.sql"
 .INPUTS
    -UName "Domain\user" -PWord "P@ssw0rd!"
 .OUTPUTS
@@ -24,9 +24,9 @@ Param (
     [string]$UName,
     [string]$PWord,
     [string]$artifactsLocation = "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master",
-    [string]$folderName = ".",
-    [string]$fileToInstall = "Gavea-sqlscript.sql",
-    [string]$artifactsLocationSasToken = ""
+    [string]$artifactsLocationSasToken = "",
+    [string]$folderName = "sqlscript",
+    [string]$fileToInstall = "Gavea-sqlscript.sql"
 )
 
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | out-null
@@ -112,7 +112,7 @@ function addlocaladministrators {
 
 function downloadscript {
 
-$source = $artifactsLocation + "\$folderName\$fileToInstall" + $artifactsLocationSasToken
+$source = $artifactsLocation + "\$fileToInstall" + $artifactsLocationSasToken
 $dest = "C:\WindowsAzure\$folderName"
 New-Item -Path $dest -ItemType directory
 Invoke-WebRequest $source -OutFile "$dest\$fileToInstall"

@@ -182,9 +182,10 @@
     "nicName": "[concat(parameters('virtualMachineName'),'Nic01')]",
     "subnetId": "[parameters('existingSubnetID')]",
     "scriptFolder": ".",
+    "sqlscriptFolder": "sqlscript",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
     "sqlscriptFileName": "Gavea-sqlscript.sql",
-    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'), ' -folderName ', variables('scriptfolder'), ' -fileToInstall ', variables('sqlscriptFileName'), ' -artifactsLocationSasToken ', parameters('_artifactsLocationSasToken'))]"
+    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'), ' -artifactsLocationSasToken \"', parameters('_artifactsLocationSasToken'), '\" -folderName ', variables('sqlscriptFolder'), ' -fileToInstall ', variables('sqlscriptFileName'))]"
   },
   "resources": [
    
