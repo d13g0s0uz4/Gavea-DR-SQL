@@ -104,7 +104,7 @@ function addlocaladministrators {
     Start-Service SQLSERVERAGENT
 
     $execute = SQLCMD -S $Server -Q "if exists( select * from fn_my_permissions(NULL, 'SERVER') where permission_name = 'CONTROL SERVER') print 'You are a sysadmin.'" 
-    log($execute, red)
+    log($execute)
 
 }
 
