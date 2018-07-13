@@ -184,7 +184,7 @@
     "scriptFolder": ".",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
     "sqlscriptFileName": "Gavea-sqlscript.sql",
-    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'))]"
+    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'), ' -folderName ', variables('scriptfolder'), ' -fileToInstall ', variables('sqlscriptFileName'), ' -artifactsLocationSasToken ', parameters('_artifactsLocationSasToken'))]"
   },
   "resources": [
    
@@ -416,8 +416,7 @@
           "autoUpgradeMinorVersion": true,
           "settings": {
               "fileUris": [
-                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]",
-                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('sqlScriptFileName'), parameters('_artifactsLocationSasToken'))]"
+                  "[concat(parameters('_artifactsLocation'), '/', variables('ScriptFolder'), '/', variables('ScriptFileName'), parameters('_artifactsLocationSasToken'))]"
               ],
               "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('scriptFolder'), '/', variables('scriptFileName'), ' ', variables('scriptParameters'))]"
           }
