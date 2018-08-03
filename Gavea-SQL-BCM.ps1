@@ -3,19 +3,30 @@
    Gavea scripts to change Azure VM SQL server and SQL Agent/permission
 .DESCRIPTION
    This script will:
-   1- Update/change MSSQLSERVER/MSSQLAGENT Windows service account (restart SQL and Agent services)
-   2- Add local\Administrators group as sa (restart SQL and Agent services)
-   3- Run sql-cmd tempdb.sql for details (restart SQL and Agent services)
+   1- Download scripts
+   2- Update/change MSSQLSERVER/MSSQLAGENT Windows service account (restart SQL and Agent services)
+   3- Add local\Administrators group as sa (restart SQL and Agent services)
+   4- Run sql-cmd tempdb.sql for details (restart SQL and Agent services)
+   5- Download sql backups from blobstorage
 .EXAMPLE
-   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master" -artifactsLocationSasToken "" -folderName "." -fileToInstall "Gavea-sqlscript.sql"
+   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master" -blobStorageAccountName "stgbcmsql" -blobStorageAccountKey "key""
 .INPUTS
-   -UName "Domain\user" -PWord "P@ssw0rd!"
+   -UName "Domain\user"
+   -PWord "P@ssw0rd!"
+   -artifactsLocation "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master"
+   -blobStorageAccountName "stgbcmsql"
+   -blobStorageAccountKey "key"
 .OUTPUTS
    NONE
 .NOTES
    Source https://dba.stackexchange.com/questions/22006/how-to-change-sql-server-service-account-using-ps
 .FUNCTIONALITY
+   Download files from public repo
    Update MSSQLSERVER and SQLSERVERAGENT Windows services accounts
+   Add windows local\Administrators as sa
+   Run sql-cmd scripts
+   download files from private repository
+   to infinity and beyond (lol)
 #>
 
 
@@ -23,8 +34,9 @@
 Param (
     [string]$UName,
     [string]$PWord,
-    [string]$artifactsLocation = "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master"
-
+    [string]$artifactsLocation = "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master",
+    [string]$blobStorageAccountName = "stgbcmsql",
+    [string]$blobStorageAccountKey
 )
 
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | out-null
@@ -135,8 +147,27 @@ function runsqlscript {
     Start-Service SQLSERVERAGENT
 }
 
+function downloadblob {
+    log "Starting Function 'downloadblob' to download blob data [SQL backups] to F:\backups" red
+    log "Creating folder F:\backups\" green
+    New-Item -Path "F:\backups\" -ItemType directory | Out-Null
+    log "Installing latest AzureRM" green
+    Install-Module -Name AzureRM -Repository PSGallery -Force -AllowClobber -SkipPublisherCheck
+    log "Setup AzureStorageContext" green
+    $ctx = New-AzureStorageContext -StorageAccountName $blobStorageAccountName -StorageAccountKey $blobStorageAccountKey
+    $ContainerName1 = "diff-backups"
+    $ContainerName2 = "full-backups"
+    $downloadblobDirectory = "F:\backups\"
+    log "Downloading differential backups" green
+    Get-AzureStorageBlob -Container $ContainerName1 -Context $ctx | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadblobDirectory -Context $ctx
+    log "Downloading full backups" green
+    Get-AzureStorageBlob -Container $ContainerName2 -Context $ctx | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadblobDirectory -Context $ctx
+    log "finish downloadblob funcion" green
+}
+
 downloadscript
 changesvcaccount
 addlocaladministrators
 runsqlscript
+downloadblob
 log "Finished Gavea-SQL-BCM script" red

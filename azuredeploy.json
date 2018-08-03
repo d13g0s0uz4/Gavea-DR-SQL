@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
+  "contentVersion": "1.1.0.0",
   "parameters": {
     "existingSubnetID": {
       "type": "string",
@@ -164,6 +164,20 @@
         "description": "The base URI where powershell script to update sql used. When the template is deployed using the accompanying scripts."
       },
       "defaultValue": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master"
+    },
+    "blobStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "blobStorageAccount with SQL backups."
+      },
+      "defaultValue": "stgbcmsql"
+    },
+    "blobStorageAccountKey": {
+      "type": "securestring",
+      "defaultValue": "ChangeMe@123",
+      "metadata": {
+        "description": "blobStorageAccount access key, this key will be used to access blobStorageAccountName data."
+      }
     }
     },
   "variables": {
@@ -177,7 +191,9 @@
     "scriptFolder": ".",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
     "sqlscriptFileName": "Gavea-sqlscript.sql",
-    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'))]"
+    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'))]",
+    "blobStorageAccountName": "[parameters('blobStorageAccountName')]",
+    "blobStorageAccountKey": "[parameters('blobStorageAccountKey')]"
   },
   "resources": [
    
