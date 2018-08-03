@@ -151,8 +151,10 @@ function downloadblob {
     log "Starting Function 'downloadblob' to download blob data [SQL backups] to F:\backups" red
     log "Creating folder F:\backups\" green
     New-Item -Path "F:\backups\" -ItemType directory | Out-Null
+    log "Installing latest Nuget" green
+    Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
     log "Installing latest AzureRM" green
-    Install-Module -Name AzureRM -Repository PSGallery -Force -AllowClobber -SkipPublisherCheck
+    Install-Module -Name AzureRM -Repository PSGallery -Force
     log "Setup AzureStorageContext" green
     $ctx = New-AzureStorageContext -StorageAccountName $blobStorageAccountName -StorageAccountKey $blobStorageAccountKey
     $ContainerName1 = "diff-backups"
