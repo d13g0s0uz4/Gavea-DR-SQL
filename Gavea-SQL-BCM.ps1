@@ -9,11 +9,11 @@
    4- Run sql-cmd tempdb.sql for details (restart SQL and Agent services)
    5- Download sql backups from blobstorage
 .EXAMPLE
-   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master" -blobStorageAccountName "stgbcmsql" -blobStorageAccountKey "key""
+   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master" -blobStorageAccountName "stgbcmsql" -blobStorageAccountKey "key""
 .INPUTS
    -UName "Domain\user"
    -PWord "P@ssw0rd!"
-   -artifactsLocation "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master"
+   -artifactsLocation "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master"
    -blobStorageAccountName "stgbcmsql"
    -blobStorageAccountKey "key"
 .OUTPUTS
@@ -34,7 +34,7 @@
 Param (
     [string]$UName,
     [string]$PWord,
-    [string]$artifactsLocation = "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master",
+    [string]$artifactsLocation = "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master",
     [string]$blobStorageAccountName = "stgbcmsql",
     [string]$blobStorageAccountKey
 )
