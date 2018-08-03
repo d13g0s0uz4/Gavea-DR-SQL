@@ -4,7 +4,7 @@
   "parameters": {
     "existingSubnetID": {
       "type": "string",
-      "defaultValue": "/subscriptions/be7e27bc-08d7-4bc3-8d97-3d4e6e0476e7/resourceGroups/rg-csp-infra/providers/Microsoft.Network/virtualNetworks/br-csp/subnets/intranet-b",
+      "defaultValue": "/subscriptions/be7e27bc-08d7-4bc3-8d97-3d4e6e0476e7/resourceGroups/rg-infra-ap/providers/Microsoft.Network/virtualNetworks/br-csp/subnets/intranet-b",
       "metadata": {
         "description": "Existing subnet ID to deploy VM, this subnet must have connectivity with AD Domain"
       }
