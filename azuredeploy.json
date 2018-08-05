@@ -191,9 +191,7 @@
     "scriptFolder": ".",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
     "sqlscriptFileName": "Gavea-sqlscript.sql",
-    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'))]",
-    "blobStorageAccountName": "[parameters('blobStorageAccountName')]",
-    "blobStorageAccountKey": "[parameters('blobStorageAccountKey')]"
+    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'), ' -blobStorageAccountName ', parameters('blobStorageAccountName'), ' -blobStorageAccountkey ', parameters('blobStorageAccountkey'))]"
   },
   "resources": [
    
