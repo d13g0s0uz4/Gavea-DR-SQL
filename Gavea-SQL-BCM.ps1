@@ -147,14 +147,17 @@ function runsqlscript {
     Start-Service SQLSERVERAGENT
 }
 
-function downloadblob {
-    log "Starting Function 'downloadblob' to download blob data [SQL backups] to F:\backups" red
-    log "Creating folder F:\backups\" green
-    New-Item -Path "F:\backups\" -ItemType directory | Out-Null
+function initProvider {
     log "Installing latest Nuget" green
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
     log "Installing latest AzureRM" green
     Install-Module -Name AzureRM -Repository PSGallery -Force
+}
+
+function downloadblob {
+    log "Starting Function 'downloadblob' to download blob data [SQL backups] to F:\backups" red
+    log "Creating folder F:\backups\" green
+    New-Item -Path "F:\backups\" -ItemType directory | Out-Null
     log "Setup AzureStorageContext" green
     $ctx = New-AzureStorageContext -StorageAccountName $blobStorageAccountName -StorageAccountKey $blobStorageAccountKey
     $ContainerName1 = "diff-backups"
@@ -164,12 +167,36 @@ function downloadblob {
     Get-AzureStorageBlob -Container $ContainerName1 -Context $ctx | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadblobDirectory -Context $ctx
     log "Downloading full backups" green
     Get-AzureStorageBlob -Container $ContainerName2 -Context $ctx | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadblobDirectory -Context $ctx
-    log "finish downloadblob funcion" green
+    log "finish downloadblob function" green
+}
+function downloadPostDeployScripts {
+    log "Starting Function 'downloadPostDeployScripts' to download post-install sql scripts [post-deploy-scripts] to F:\sqlScripts" red
+    log "Creating folder F:\sqlScripts\" green
+    New-Item -Path "F:\sqlScripts\" -ItemType directory | Out-Null
+    log "Setup AzureStorageContext" green
+    $ctx = New-AzureStorageContext -StorageAccountName $blobStorageAccountName -StorageAccountKey $blobStorageAccountKey
+    $ContainerName = "post-deploy-scripts"    
+    $downloadDirectory = "F:\sqlScripts\"
+    log "Downloading post-install sql scripts" green
+    Get-AzureStorageBlob -Container $ContainerName -Context $ctx | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadDirectory -Context $ctx
+    log "finish downloadPostDeployScripts function" green
+}
+
+function runPostDeployScripts {
+    foreach ($scriptFile in Get-ChildItem "F:\sqlScripts\" | Sort-Object | Select-Object FullName) 
+    {
+        log "starting sql script SQLCMD -S $Server -i $scriptFile -o $scriptFile.rpt" green
+        SQLCMD -S $Server -i $scriptFile -o "$scriptFile.rpt"
+        log(cat "$scriptFile.rpt")
+    }
 }
 
 downloadscript
 changesvcaccount
 addlocaladministrators
 runsqlscript
+initProvider
 downloadblob
+downloadPostDeployScripts
+runPostDeployScripts
 log "Finished Gavea-SQL-BCM script" red
