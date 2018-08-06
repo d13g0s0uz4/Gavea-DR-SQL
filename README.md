@@ -29,4 +29,3 @@ Details about some of the parameters:
 10. dnsLabelPrefix
 4. ouPath - This is an optional parameter that allows you to join this virtual machine into a specific OU instead of the default Computers container. E.g. OU=MyCorpComputers,DC=Contoso,DC=com
 
-
