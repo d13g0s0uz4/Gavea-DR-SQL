@@ -183,7 +183,7 @@ function downloadPostDeployScripts {
 }
 
 function runPostDeployScripts {
-    foreach ($scriptFile in Get-ChildItem "F:\sqlScripts\" | Sort-Object | Select-Object FullName) 
+    foreach ($scriptFile in Get-ChildItem "F:\sqlScripts\" | Sort-Object | Select-Object -ExpandProperty FullName) 
     {
         log "starting sql script SQLCMD -S $Server -i $scriptFile -o $scriptFile.rpt" green
         SQLCMD -S $Server -i $scriptFile -o "$scriptFile.rpt"
