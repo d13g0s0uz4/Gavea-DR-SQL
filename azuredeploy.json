@@ -37,7 +37,7 @@
     "storageAccountName": {
       "type": "string",
       "metadata": {
-        "description": "New SQL Server Virtual Machine Storage Account name"
+        "description": "New Storage Account name used to host Virtual Machine disks"
       },
       "defaultValue": "stgdbbcm02"
     },
@@ -45,21 +45,21 @@
       "type": "string",
       "defaultValue": "gavea.local",
       "metadata": {
-        "description": "The FQDN of the AD domain"
+        "description": "FQDN of the existing AD domain"
       }
     },
     "domainUsername": {
       "type": "string",
       "defaultValue": "adm_dsouza",
       "metadata": {
-        "description": "Username of the account used to join the VM on the existing domain"
+        "description": "Account used to join the VM on domain"
       }
     },
     "domainPassword": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "Password of the account used to join the VM on the existing domain"
+        "description": "Password to join the VM on domain"
       }
     },
     "ouPath": {
@@ -155,7 +155,7 @@
       "type": "string",
       "defaultValue": "brazilsouth",
       "metadata": {
-        "description": "Azure Location for all resources."
+        "description": "Azure Region for resources."
       }
     },
     "_artifactsLocation": {
@@ -174,7 +174,7 @@
     },
     "blobStorageAccountKey": {
       "type": "securestring",
-      "defaultValue": "ChangeMe@123",
+      "defaultValue": "",
       "metadata": {
         "description": "blobStorageAccount access key, this key will be used to access blobStorageAccountName data."
       }
