@@ -9,13 +9,15 @@
    4- Run sql-cmd tempdb.sql for details (restart SQL and Agent services)
    5- Download sql backups from blobstorage
 .EXAMPLE
-   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master" -blobStorageAccountName "stgbcmsql" -blobStorageAccountKey "key""
+   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master" -blobStorageAccountName "stgbcmsql" -blobStorageAccountKey "key" -blobStorageAccountNameDiff "stgbcmsqldiff" -blobStorageAccountKeyDiff "key""
 .INPUTS
    -UName "Domain\user"
    -PWord "P@ssw0rd!"
    -artifactsLocation "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master"
    -blobStorageAccountName "stgbcmsql"
    -blobStorageAccountKey "key"
+   -blobStorageAccountNameDiff "stgbcmsqldiff"
+   -blobStorageAccountKeyDiff "keydiff"
 .OUTPUTS
    NONE
 .NOTES

@@ -172,11 +172,25 @@
       },
       "defaultValue": "stgbcmsql"
     },
+    "blobStorageAccountNameDiff": {
+      "type": "string",
+      "metadata": {
+        "description": "blobStorageAccount with SQL backups."
+      },
+      "defaultValue": "stgbcmsqldiff"
+    },
     "blobStorageAccountKey": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
         "description": "blobStorageAccount access key, this key will be used to access blobStorageAccountName data."
+      }
+    },
+    "blobStorageAccountKeyDiff": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "blobStorageAccount access key, this key will be used to access blobStorageAccountNameDiff data."
       }
     }
     },
@@ -191,7 +205,7 @@
     "scriptFolder": ".",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
     "sqlscriptFileName": "Gavea-sqlscript.sql",
-    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'), ' -blobStorageAccountName ', parameters('blobStorageAccountName'), ' -blobStorageAccountkey ', parameters('blobStorageAccountkey'))]"
+    "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'), ' -blobStorageAccountName ', parameters('blobStorageAccountName'), ' -blobStorageAccountkey ', parameters('blobStorageAccountkey'), ' -blobStorageAccountNameDiff ', parameters('blobStorageAccountNameDiff'), ' -blobStorageAccountkeyDiff ', parameters('blobStorageAccountkeyDiff'))]"
   },
   "resources": [
    
