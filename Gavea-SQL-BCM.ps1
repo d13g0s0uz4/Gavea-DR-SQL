@@ -9,13 +9,15 @@
    4- Run sql-cmd tempdb.sql for details (restart SQL and Agent services)
    5- Download sql backups from blobstorage
 .EXAMPLE
-   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master" -blobStorageAccountName "stgbcmsql" -blobStorageAccountKey "key""
+   powershell -ExecutionPolicy Unrestricted -File Gavea-SQL-BCM.ps1 -UName "Domain\user" -PWord "P@ssw0rd!" -artifactsLocation "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master" -blobStorageAccountName "stgbcmsql" -blobStorageAccountKey "key" -blobStorageAccountNameDiff "stgbcmsqldiff" -blobStorageAccountKeyDiff "key""
 .INPUTS
    -UName "Domain\user"
    -PWord "P@ssw0rd!"
    -artifactsLocation "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master"
    -blobStorageAccountName "stgbcmsql"
    -blobStorageAccountKey "key"
+   -blobStorageAccountNameDiff "stgbcmsqldiff"
+   -blobStorageAccountKeyDiff "keydiff"
 .OUTPUTS
    NONE
 .NOTES
@@ -36,7 +38,9 @@ Param (
     [string]$PWord,
     [string]$artifactsLocation = "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master",
     [string]$blobStorageAccountName = "stgbcmsql",
-    [string]$blobStorageAccountKey
+    [string]$blobStorageAccountKey,
+    [string]$blobStorageAccountNameDiff = "stgbcmsqldiff",
+    [string]$blobStorageAccountKeyDiff
 )
 
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SqlWmiManagement") | out-null
@@ -160,13 +164,14 @@ function downloadblob {
     New-Item -Path "D:\backups\" -ItemType directory | Out-Null
     log "Setup AzureStorageContext" green
     $ctx = New-AzureStorageContext -StorageAccountName $blobStorageAccountName -StorageAccountKey $blobStorageAccountKey
-    $ContainerName1 = "diff-backups"
-    $ContainerName2 = "full-backups"
+    $ctxDiff = New-AzureStorageContext -StorageAccountName $blobStorageAccountNameDiff -StorageAccountKey $blobStorageAccountKeyDiff
+    $ContainerNameDiff = "diff-backups"
+    $ContainerNameFull = "full-backups"
     $downloadblobDirectory = "D:\backups\"
     log "Downloading differential backups" green
-    Get-AzureStorageBlob -Container $ContainerName1 -Context $ctx | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadblobDirectory -Context $ctx
+    Get-AzureStorageBlob -Container $ContainerNameDiff -Context $ctxDiff | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadblobDirectory -Context $ctxDiff
     log "Downloading full backups" green
-    Get-AzureStorageBlob -Container $ContainerName2 -Context $ctx | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadblobDirectory -Context $ctx
+    Get-AzureStorageBlob -Container $ContainerNameFull -Context $ctx | Where-Object SnapshotTime -eq $null | Get-AzureStorageBlobContent -Destination $downloadblobDirectory -Context $ctx
     log "finish downloadblob function" green
 }
 function downloadPostDeployScripts {
