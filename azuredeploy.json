@@ -198,7 +198,7 @@
     "storageAccountName": "[parameters('storageAccountName')]",
     "storageAccountNameBootDiag": "[concat(parameters('storageAccountName'),'bdiag')]",
     "imagePublisher": "MicrosoftSQLServer",
-    "imageOffer": "SQL2014SP2-WS2012R2-BYOL",
+    "imageOffer": "SQL2014SP2-WS2012R2",
     "sku": "Standard",
     "nicName": "[concat(parameters('virtualMachineName'),'Nic01')]",
     "subnetId": "[parameters('existingSubnetID')]",
