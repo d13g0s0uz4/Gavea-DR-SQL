@@ -408,7 +408,7 @@
       "name": "[concat(parameters('virtualMachineName'),'/joindomain')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Resources/deployments/', 'prepareSqlVmDeployment')]"
+        "[concat('Microsoft.SqlVirtualMachine/SqlVirtualMachines/', parameters('virtualMachineName'))]"
       ],
       "properties": {
         "publisher": "Microsoft.Compute",
