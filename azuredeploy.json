@@ -387,7 +387,7 @@
         },
         "StorageConfigurationSettings": {
           "DiskConfigurationType": "[variables('diskConfigurationType')]",
-          "StorageWorkloadType": "[parameters('storageWorkloadType')]",
+          "StorageWorkloadType": "[parameters('sqlStorageWorkloadType')]",
           "SQLDataSettings": {
             "LUNs": "[variables('dataDisksLUNs')]",
             "DefaultFilePath": "[parameters('dataPath')]"
