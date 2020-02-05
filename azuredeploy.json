@@ -19,6 +19,11 @@
     "vmSize": {
       "type": "string",
       "defaultValue": "Standard_E16s_v3",
+      "allowedValues": [
+        "Standard_E16s_v3",
+        "Standard_DS13_v2",
+        "Standard_DS11_v2"
+      ],
       "metadata": {
         "description": "The size of the virtual machines"
       }
@@ -95,6 +100,11 @@
       "metadata": {
         "description": "SQL Server Virtual Machine SQL Connectivity Type"
       },
+      "allowedValues": [
+        "Private",
+        "Local",
+        "Public"
+      ],
       "defaultValue": "Private"
     },
     "sqlPortNumber": {
@@ -104,12 +114,37 @@
       },
       "defaultValue": 1433
     },
-    "sqlStorageDisksCount": {
+    "sqlDataDisksCount": {
       "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 8,
       "metadata": {
-        "description": "SQL Server Virtual Machine Data Disk Count"
-      },
-      "defaultValue": 2
+        "description": "Amount of data disks (1TB each) for SQL Data files"
+      }
+    },
+    "dataPath": {
+      "type": "String",
+      "defaultValue": "F:\\SQLData",
+      "metadata": {
+        "description": "Path for SQL Data files. Please choose drive letter from F to Z, and other drives from A to E are reserved for system"
+      }
+    },
+    "sqlLogDisksCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 8,
+      "metadata": {
+        "description": "Amount of data disks (1TB each) for SQL Log files"
+      }
+    },
+    "logPath": {
+      "type": "String",
+      "defaultValue": "G:\\SQLLog",
+      "metadata": {
+        "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
+      }
     },
     "sqlStorageWorkloadType": {
       "type": "string",
@@ -199,7 +234,19 @@
     "storageAccountNameBootDiag": "[concat(parameters('storageAccountName'),'bdiag')]",
     "imagePublisher": "MicrosoftSQLServer",
     "imageOffer": "sql2017-ws2019",
-    "sku": "Standard",
+    "sku": "standard",
+    "version": "latest",
+    "diskConfigurationType": "NEW",
+    "dataDisksLuns": "[array(range(0 ,parameters('sqlDataDisksCount')))]",
+    "logDisksLuns": "[array(range(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))]",
+    "dataDisks": {
+      "createOption": "empty",
+      "caching": "ReadOnly",
+      "writeAcceleratorEnabled": false,
+      "storageAccountType": "Premium_LRS",
+      "diskSizeGB": 1023
+    },
+    "tempDbPath":  "G:\\TEMPDB",
     "nicName": "[concat(parameters('virtualMachineName'),'Nic01')]",
     "subnetId": "[parameters('existingSubnetID')]",
     "scriptFolder": ".",
@@ -208,7 +255,6 @@
     "scriptParameters": "[concat('-UName ', parameters('Uname'), ' -PWord ', parameters('PWord'), ' -artifactsLocation ', parameters('_artifactsLocation'), ' -blobStorageAccountName ', parameters('blobStorageAccountName'), ' -blobStorageAccountkey ', parameters('blobStorageAccountkey'), ' -blobStorageAccountNameDiff ', parameters('blobStorageAccountNameDiff'), ' -blobStorageAccountkeyDiff ', parameters('blobStorageAccountkeyDiff'))]"
   },
   "resources": [
-   
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Storage/storageAccounts",
@@ -247,7 +293,7 @@
       }
     },
     {
-      "apiVersion": "2017-03-30",
+      "apiVersion": "2019-07-01",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('virtualMachineName')]",
       "location": "[parameters('location')]",
@@ -258,15 +304,6 @@
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
-        },
-        "osProfile": {
-          "computerName": "[parameters('virtualMachineName')]",
-          "adminUsername": "[parameters('vmAdminUsername')]",
-          "adminPassword": "[parameters('vmAdminPassword')]",
-          "windowsConfiguration": {
-            "enableAutomaticUpdates": false,
-            "timeZone": "E. South America Standard Time"
-          }
         },
         "storageProfile": {
           "imageReference": {
@@ -283,28 +320,32 @@
               "storageAccountType": "[parameters('storageAccountType')]"
             }
           },
-          "dataDisks": [
+          "copy": [
             {
-              "name": "[concat(parameters('virtualMachineName'),'_dataDisk1')]",
-              "createOption": "Empty",
-              "managedDisk": {
-                "storageAccountType": "[parameters('storageAccountType')]"
-              },
-              "diskSizeGB": "1023",
-              "caching": "ReadOnly",
-              "lun": 0
-            },
-            {
-              "name": "[concat(parameters('virtualMachineName'),'_dataDisk2')]",
-              "caching": "ReadOnly",
-              "createOption": "Empty",
-              "managedDisk": {
-                "storageAccountType": "[parameters('storageAccountType')]"
-              },
-              "diskSizeGB": "1023",
-              "lun": 1
+              "name": "dataDisks",
+              "count": "[add(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount'))]",
+              "input": {
+                "lun": "[copyIndex('dataDisks')]",
+                "createOption": "[variables('dataDisks').createOption]",
+                "caching": "[if(greaterOrEquals(copyIndex('dataDisks'), parameters('sqlDataDisksCount')) ,'None', variables('dataDisks').caching )]",
+                "writeAcceleratorEnabled": "[variables('dataDisks').writeAcceleratorEnabled]",
+                "diskSizeGB": "[variables('dataDisks').diskSizeGB]",
+                "managedDisk": {
+                  "storageAccountType": "[variables('dataDisks').storageAccountType]"
+                }
+              }
             }
-          ]
+          ]          
+        },
+        "osProfile": {
+          "computerName": "[parameters('virtualMachineName')]",
+          "adminUsername": "[parameters('vmAdminUsername')]",
+          "adminPassword": "[parameters('vmAdminPassword')]",
+          "windowsConfiguration": {
+            "enableAutomaticUpdates": false,
+            "provisionVmAgent": true,
+            "timeZone": "E. South America Standard Time"
+          }
         },
         "networkProfile": {
           "networkInterfaces": [
@@ -322,77 +363,41 @@
       }
     },
     {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('virtualMachineName'), '/SqlIaasExtension')]",
+      "type": "Microsoft.SqlVirtualMachine/SqlVirtualMachines",
+      "apiVersion": "2017-03-01-preview",
+      "name": "[parameters('virtualMachineName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]"
       ],
       "properties": {
-        "type": "SqlIaaSAgent",
-        "publisher": "Microsoft.SqlServer.Management",
-        "typeHandlerVersion": "1.2",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "AutoTelemetrySettings": {
-            "Region": "[parameters('location')]"
+        "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachineName'))]",
+        "sqlManagement": "Full",
+        "SqlServerLicenseType": "PAYG",
+        "serverConfigurationsManagementSettings": {
+          "sqlConnectivityUpdateSettings": {
+            "connectivityType": "[parameters('sqlConnectivityType')]",
+            "port": "[parameters('sqlPortNumber')]",
+            "sqlAuthUpdateUserName": "[parameters('sqlAuthenticationLogin')]",
+            "sqlAuthUpdatePassword": "[parameters('sqlAuthenticationPassword')]"
+          },
+          "sqlWorkloadTypeUpdateSettings": {
+            "sqlWorkloadType": "[parameters('sqlStorageWorkloadType')]"
           }
-        }
-      
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "name": "prepareSqlVmDeployment",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'),'/extensions/SqlIaasExtension')]"
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master/nested/preparingSqlServerSa.json"
         },
-        "parameters": {
-          "sqlVMName": {
-            "value": "[parameters('virtualMachineName')]"
+        "StorageConfigurationSettings": {
+          "DiskConfigurationType": "[variables('diskConfigurationType')]",
+          "StorageWorkloadType": "[parameters('storageWorkloadType')]",
+          "SQLDataSettings": {
+            "LUNs": "[variables('dataDisksLUNs')]",
+            "DefaultFilePath": "[parameters('dataPath')]"
           },
-          "location": {
-            "value": "[parameters('location')]"
+          "SQLLogSettings": {
+            "Luns": "[variables('logDisksLUNs')]",
+            "DefaultFilePath": "[parameters('logPath')]"
           },
-          "adminUsername": {
-            "value": "[parameters('vmadminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('vmadminPassword')]"
-          },
-          "sqlUsername": {
-            "value": "[parameters('sqlAuthenticationLogin')]"
-          },
-          "sqlPassword": {
-            "value": "[parameters('sqlAuthenticationPassword')]"
-          },
-          "disksCount": {
-            "value": "[parameters('sqlStorageDisksCount')]"
-          },
-          "diskSizeInGB": {
-            "value": 1023
-          },
-          "sqlEnginePort": {
-            "value": "[parameters('sqlPortNumber')]"
-          },
-          "workloadType": {
-            "value": "[parameters('sqlStorageWorkloadType')]"
-          },
-          "connectionType": {
-            "value": "[parameters('sqlConnectivityType')]"
-          },
-          "sqlVMPrepareModulesURL": {
-            "value": "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master/scripts/PrepareSqlServer.ps1.zip"
-          },
-          "sqlVMPrepareConfigurationFunction": {
-            "value": "PrepareSqlServerSa.ps1\\PrepareSqlServerSa"
+          "SQLTempDbSettings": {
+            "DefaultFilePath": "[variables('tempDbPath')]"
           }
         }
       }
