@@ -1,9 +1,9 @@
 # Create a new Azure virtual machine with SQL image and join into an existing AD Domain
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fGaveaInvest%2fGavea-DR-SQL%2fmaster%2fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fd13g0s0uz4%2fGavea-DR-SQL%2fmaster%2fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fGaveaInvest%2fGavea-DR-SQL%2fmaster%2fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fd13g0s0uz4%2fGavea-DR-SQL%2fmaster%2fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/AzureGov.png"/>
 </a>
 
@@ -41,3 +41,19 @@ Details about some of the parameters:
 23. _artifactsLocation - The base URI where powershell script to update sql used. When the template is deployed using the accompanying scripts.
 24. blobStorageAccountName - blobStorageAccount with SQL backups.
 25. blobStorageAccountKey - blobStorageAccount access key, this key will be used to access blobStorageAccountName data.
+
+##Templates used as source information:
+https://github.com/d13g0s0uz4/azure-quickstart-templates/tree/master/101-sql-vm-new-storage
+https://github.com/d13g0s0uz4/azure-quickstart-templates/tree/master/201-vm-domain-join
+
+
+##Docs:
+###SQL
+https://docs.microsoft.com/en-us/azure/templates/microsoft.sqlvirtualmachine/2017-03-01-preview/sqlvirtualmachines
+###AD Join
+https://docs.microsoft.com/bs-latn-ba/Azure/active-directory-domain-services/join-windows-vm-template
+###Custom Scripts
+https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-windows
+
+
+
