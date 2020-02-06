@@ -223,7 +223,7 @@
       "metadata": {
         "description": "The base URI where powershell script to update sql used. When the template is deployed using the accompanying scripts."
       },
-      "defaultValue": "https://raw.githubusercontent.com/GaveaInvest/Gavea-DR-SQL/master"
+      "defaultValue": "https://raw.githubusercontent.com/d13g0s0uz4/Gavea-DR-SQL/master"
     },
     "blobStorageAccountName": {
       "type": "string",
