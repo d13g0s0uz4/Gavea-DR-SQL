@@ -45,6 +45,7 @@ Details about some of the parameters:
 ##Templates used as source information:
 https://github.com/d13g0s0uz4/azure-quickstart-templates/tree/master/101-sql-vm-new-storage
 https://github.com/d13g0s0uz4/azure-quickstart-templates/tree/master/201-vm-domain-join
+https://github.com/Azure/azure-quickstart-templates/tree/master/101-vm-windows-copy-datadisks
 
 
 ##Docs:

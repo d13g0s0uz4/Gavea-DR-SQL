@@ -238,7 +238,7 @@
     "version": "latest",
     "diskConfigurationType": "NEW",
     "dataDisksLuns": "[array(range(0 ,parameters('sqlDataDisksCount')))]",
-    "logDisksLuns": "[array(range(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))]",
+    "logDisksLuns": "[array(range(0, parameters('sqlLogDisksCount')))]",
     "dataDisks": {
       "createOption": "empty",
       "caching": "ReadOnly",
@@ -327,7 +327,7 @@
               "input": {
                 "lun": "[copyIndex('dataDisks')]",
                 "createOption": "[variables('dataDisks').createOption]",
-                "caching": "[if(greaterOrEquals(copyIndex('dataDisks'), parameters('sqlDataDisksCount')) ,'None', variables('dataDisks').caching )]",
+                "caching": "variables('dataDisks').caching )]",
                 "writeAcceleratorEnabled": "[variables('dataDisks').writeAcceleratorEnabled]",
                 "diskSizeGB": "[variables('dataDisks').diskSizeGB]",
                 "managedDisk": {
