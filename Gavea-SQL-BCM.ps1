@@ -199,7 +199,7 @@ function runPostDeployScripts {
 downloadscript
 changesvcaccount
 addlocaladministrators
-runsqlscript
+#runsqlscript
 initProvider
 downloadblob
 downloadPostDeployScripts
