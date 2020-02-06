@@ -118,7 +118,7 @@
       "type": "int",
       "defaultValue": 1,
       "minValue": 1,
-      "maxValue": 8,
+      "maxValue": 1,
       "metadata": {
         "description": "Amount of data disks (1TB each) for SQL Data files"
       }
@@ -134,7 +134,7 @@
       "type": "int",
       "defaultValue": 1,
       "minValue": 1,
-      "maxValue": 8,
+      "maxValue": 1,
       "metadata": {
         "description": "Amount of data disks (1TB each) for SQL Log files"
       }
@@ -244,8 +244,8 @@
     "sku": "standard",
     "version": "latest",
     "diskConfigurationType": "NEW",
-    "dataDisksLuns": "[array(0,0)]",
-    "logDisksLuns": "[array(1,1)]",
+    "dataDiskLuns": 0,
+    "logDiskLuns": 1,
     "dataDisks": {
       "createOption": "empty",
       "caching": "ReadOnly",
@@ -395,11 +395,11 @@
           "DiskConfigurationType": "[variables('diskConfigurationType')]",
           "StorageWorkloadType": "[parameters('sqlStorageWorkloadType')]",
           "SQLDataSettings": {
-            "LUNs": "[variables('dataDisksLUNs')]",
+            "LUNs": "[array(variables('dataDiskLUNs'))]",
             "DefaultFilePath": "[parameters('dataPath')]"
           },
           "SQLLogSettings": {
-            "Luns": "[variables('logDisksLUNs')]",
+            "Luns": "[array(variables('logDiskLUNs'))]",
             "DefaultFilePath": "[parameters('logPath')]"
           },
           "SQLTempDbSettings": {
