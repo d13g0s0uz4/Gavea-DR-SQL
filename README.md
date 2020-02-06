@@ -42,18 +42,18 @@ Details about some of the parameters:
 24. blobStorageAccountName - blobStorageAccount with SQL backups.
 25. blobStorageAccountKey - blobStorageAccount access key, this key will be used to access blobStorageAccountName data.
 
-##Templates used as source information:
+## Templates used as source information:
 https://github.com/d13g0s0uz4/azure-quickstart-templates/tree/master/101-sql-vm-new-storage
 https://github.com/d13g0s0uz4/azure-quickstart-templates/tree/master/201-vm-domain-join
 https://github.com/Azure/azure-quickstart-templates/tree/master/101-vm-windows-copy-datadisks
 
 
-##Docs:
-###SQL
+## Docs:
+### SQL
 https://docs.microsoft.com/en-us/azure/templates/microsoft.sqlvirtualmachine/2017-03-01-preview/sqlvirtualmachines
-###AD Join
+### AD Join
 https://docs.microsoft.com/bs-latn-ba/Azure/active-directory-domain-services/join-windows-vm-template
-###Custom Scripts
+### Custom Scripts
 https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-windows
 
 
