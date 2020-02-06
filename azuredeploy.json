@@ -306,12 +306,6 @@
           "vmSize": "[parameters('vmSize')]"
         },
         "storageProfile": {
-          "imageReference": {
-            "publisher": "[variables('imagePublisher')]",
-            "offer": "[variables('imageOffer')]",
-            "sku": "[variables('sku')]",
-            "version": "latest"
-          },
           "osDisk": {
             "name": "[concat(parameters('virtualMachineName'),'_OsDisk')]",
             "caching": "ReadWrite",
@@ -319,6 +313,12 @@
             "managedDisk": {
               "storageAccountType": "[parameters('storageAccountType')]"
             }
+          },
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[variables('sku')]",
+            "version": "latest"
           },
           "copy": [
             {
