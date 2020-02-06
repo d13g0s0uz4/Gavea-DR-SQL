@@ -327,7 +327,7 @@
               "input": {
                 "lun": "[copyIndex('dataDisks')]",
                 "createOption": "[variables('dataDisks').createOption]",
-                "caching": "variables('dataDisks').caching )]",
+                "caching": "[if(greaterOrEquals(copyIndex('dataDisks'), parameters('sqlDataDisksCount')) ,'None', variables('dataDisks').caching )]",
                 "writeAcceleratorEnabled": "[variables('dataDisks').writeAcceleratorEnabled]",
                 "diskSizeGB": "[variables('dataDisks').diskSizeGB]",
                 "managedDisk": {
