@@ -1,9 +1,9 @@
 # Create a new Azure virtual machine with SQL image and join into an existing AD Domain
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fd13g0s0uz4%2fGavea-DR-SQL%2fmaster%2fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fGaveaInvest%2fGavea-DR-SQL%2fmaster%2fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fd13g0s0uz4%2fGavea-DR-SQL%2fmaster%2fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fGaveaInvest%2fGavea-DR-SQL%2fmaster%2fazuredeploy.json" target="_blank">
     <img src="http://azuredeploy.net/AzureGov.png"/>
 </a>
 
