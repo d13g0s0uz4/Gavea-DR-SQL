@@ -124,8 +124,8 @@
       }
     },
     "dataDisksLuns": {
-      "type": "array",
-      "defaultValue": "0,0",
+      "type": "string",
+      "defaultValue": "0",
       "metadata": {
         "description": "first data disk lun and last data disk lun"
       }
@@ -147,8 +147,8 @@
       }
     },
     "logDisksLuns": {
-      "type": "array",
-      "defaultValue": "0,0",
+      "type": "string",
+      "defaultValue": "1",
       "metadata": {
         "description": "first log disk lun and last log disk lun"
       }
