@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.1.0.0",
+  "contentVersion": "1.0.0.0",
   "parameters": {
     "existingSubnetID": {
       "type": "string",
@@ -118,13 +118,20 @@
       "type": "int",
       "defaultValue": 1,
       "minValue": 1,
-      "maxValue": 1,
+      "maxValue": 4,
       "metadata": {
         "description": "Amount of data disks (1TB each) for SQL Data files"
       }
     },
+    "dataDisksLuns": {
+      "type": "array",
+      "defaultValue": "0,0",
+      "metadata": {
+        "description": "first data disk lun and last data disk lun"
+      }
+    },
     "dataPath": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "F:\\SQLData",
       "metadata": {
         "description": "Path for SQL Data files. Please choose drive letter from F to Z, and other drives from A to E are reserved for system"
@@ -134,20 +141,27 @@
       "type": "int",
       "defaultValue": 1,
       "minValue": 1,
-      "maxValue": 1,
+      "maxValue": 4,
       "metadata": {
         "description": "Amount of data disks (1TB each) for SQL Log files"
       }
     },
+    "logDisksLuns": {
+      "type": "array",
+      "defaultValue": "0,0",
+      "metadata": {
+        "description": "first log disk lun and last log disk lun"
+      }
+      },
     "logPath": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "G:\\SQLLog",
       "metadata": {
         "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
       }
     },
     "tempDbPath": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "G:\\SQLTEMPDB",
       "metadata": {
         "description": "Path for SQL TEMP DB files.Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
@@ -244,8 +258,6 @@
     "sku": "standard",
     "version": "latest",
     "diskConfigurationType": "NEW",
-    "dataDiskLuns": 0,
-    "logDiskLuns": 1,
     "dataDisks": {
       "createOption": "empty",
       "caching": "ReadOnly",
@@ -386,20 +398,17 @@
             "port": "[parameters('sqlPortNumber')]",
             "sqlAuthUpdateUserName": "[parameters('sqlAuthenticationLogin')]",
             "sqlAuthUpdatePassword": "[parameters('sqlAuthenticationPassword')]"
-          },
-          "sqlWorkloadTypeUpdateSettings": {
-            "sqlWorkloadType": "[parameters('sqlStorageWorkloadType')]"
           }
         },
         "StorageConfigurationSettings": {
           "DiskConfigurationType": "[variables('diskConfigurationType')]",
           "StorageWorkloadType": "[parameters('sqlStorageWorkloadType')]",
           "SQLDataSettings": {
-            "LUNs": "[array(variables('dataDiskLUNs'))]",
+            "LUNs": "[array(parameters('dataDisksLUNs'))]",
             "DefaultFilePath": "[parameters('dataPath')]"
           },
           "SQLLogSettings": {
-            "Luns": "[array(variables('logDiskLUNs'))]",
+            "Luns": "[array(parameters('logDisksLUNs'))]",
             "DefaultFilePath": "[parameters('logPath')]"
           },
           "SQLTempDbSettings": {
