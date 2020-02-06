@@ -244,8 +244,8 @@
     "sku": "standard",
     "version": "latest",
     "diskConfigurationType": "NEW",
-    "dataDisksLuns": "[array(range(0 ,parameters('sqlDataDisksCount')))]",
-    "logDisksLuns": "[array(range(add(parameters('sqlDataDisksCount'),1), parameters('sqlLogDisksCount')))]",
+    "dataDisksLuns": "[array(0,0)]",
+    "logDisksLuns": "[array(1,1)]",
     "dataDisks": {
       "createOption": "empty",
       "caching": "ReadOnly",
