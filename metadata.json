@@ -1,9 +1,9 @@
 {
   "$schema": "https://aka.ms/azure-quickstart-templates-metadata-schema#",
-  "itemDisplayName": "Join a VM to an existing domain",
-  "description": "This template demonstrates domain join to a private AD domain up in cloud.",
-  "summary": "This template joins a VM to an existing domain",
-  "githubUsername": "singhkays",
-  "dateUpdated": "2018-05-25"
+  "type": "QuickStart",
+  "itemDisplayName": "SQL Server VM automated backup restore",
+  "description": "Create a SQL Server Virtual Machine with performance optimized storage settings on PremiumSSD, join computer do domain, custom script to download backup from private storage account and start the restore process",
+  "summary": "Create a SQL Server, join VM do domain and start a custo powershell script",
+  "githubUsername": "d13g0s0uz4",
+  "dateUpdated": "2020-02-06"
 }
-

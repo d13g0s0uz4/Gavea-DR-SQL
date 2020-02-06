@@ -188,6 +188,15 @@ function downloadPostDeployScripts {
 }
 
 function runPostDeployScripts {
+    log "Starting Function 'runPostDeployScripts' to initiate the restore process" red
+    log "Creating folder F:\DATA\" green
+    New-Item -Path "F:\DATA\" -ItemType directory | Out-Null
+    log "Creating folder F:\LOG\" green
+    New-Item -Path "F:\LOG\" -ItemType directory | Out-Null
+    log "Creating folder G:\LOG\" green
+    New-Item -Path "G:\LOG\" -ItemType directory | Out-Null
+    log "Creating folder D:\TEMPDB\" green
+    New-Item -Path "D:\TEMPDB" -ItemType directory | Out-Null
     foreach ($scriptFile in Get-ChildItem "F:\sqlScripts\" | Sort-Object | Select-Object -ExpandProperty FullName) 
     {
         log "starting sql script SQLCMD -S $Server -i $scriptFile -o $scriptFile.rpt" green
