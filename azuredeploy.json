@@ -146,6 +146,13 @@
         "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
       }
     },
+    "tempDbPath": {
+      "type": "String",
+      "defaultValue": "G:\\SQLTEMPDB",
+      "metadata": {
+        "description": "Path for SQL TEMP DB files.Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
+      }
+    },
     "sqlStorageWorkloadType": {
       "type": "string",
       "metadata": {
@@ -238,7 +245,7 @@
     "version": "latest",
     "diskConfigurationType": "NEW",
     "dataDisksLuns": "[array(range(0 ,parameters('sqlDataDisksCount')))]",
-    "logDisksLuns": "[array(range(0, parameters('sqlLogDisksCount')))]",
+    "logDisksLuns": "[array(range(parameters('sqlDataDisksCount'), parameters('sqlLogDisksCount')))]",
     "dataDisks": {
       "createOption": "empty",
       "caching": "ReadOnly",
@@ -246,7 +253,6 @@
       "storageAccountType": "Premium_LRS",
       "diskSizeGB": 1023
     },
-    "tempDbPath":  "G:\\TEMPDB",
     "nicName": "[concat(parameters('virtualMachineName'),'Nic01')]",
     "subnetId": "[parameters('existingSubnetID')]",
     "scriptFolder": ".",
@@ -335,7 +341,7 @@
                 }
               }
             }
-          ]          
+          ]       
         },
         "osProfile": {
           "computerName": "[parameters('virtualMachineName')]",
@@ -397,7 +403,7 @@
             "DefaultFilePath": "[parameters('logPath')]"
           },
           "SQLTempDbSettings": {
-            "DefaultFilePath": "[variables('tempDbPath')]"
+            "DefaultFilePath": "[parameters('tempDbPath')]"
           }
         }
       }
