@@ -108,7 +108,7 @@
     },
     "dataPath": {
       "type": "string",
-      "defaultValue": "F:\\SQLData",
+      "defaultValue": "F:\\Data",
       "metadata": {
         "description": "Path for SQL Data files. Please choose drive letter from F to Z, and other drives from A to E are reserved for system"
       }
@@ -124,7 +124,7 @@
     },
     "logPath": {
       "type": "string",
-      "defaultValue": "G:\\SQLLog",
+      "defaultValue": "G:\\Log",
       "metadata": {
         "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
       }
@@ -132,7 +132,7 @@
     "location": {
       "type": "string",
       "metadata": {
-        "description": "Location for all resources."
+        "description": "Azure location (region) for all resources."
       },
       "defaultValue": "[resourceGroup().location]"
     },
@@ -235,7 +235,7 @@
     "blobStorageAccountNameDiff": {
       "type": "string",
       "metadata": {
-        "description": "blobStorageAccount with SQL backups."
+        "description": "blobStorageAccount with SQL Diff backups."
       },
       "defaultValue": "stgbcmsqldiff"
     },
@@ -250,7 +250,7 @@
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
-        "description": "blobStorageAccount access key, this key will be used to access blobStorageAccountNameDiff data."
+        "description": "blobStorageAccount Diff access key, this key will be used to access blobStorageAccountNameDiff data."
       }
     }
   },
@@ -267,7 +267,7 @@
       "storageAccountType": "Premium_LRS",
       "diskSizeGB": 1023
     },
-    "tempDbPath":  "D:\\SQLTemp",
+    "tempDbPath":  "D:\\TEMPDB",
     "scriptFolder": ".",
     "scriptFileName": "Gavea-SQL-BCM.ps1",
     "sqlscriptFileName": "Gavea-sqlscript.sql",
