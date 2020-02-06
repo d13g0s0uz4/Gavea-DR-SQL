@@ -22,28 +22,28 @@
       }
     },
     "existingVnetResourceGroup": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "rg-infra-csp",
       "metadata": {
         "description": "Specify the resource group of the existing VNet"
       }
     },
     "existingVirtualNetworkName": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "br-csp",
       "metadata": {
         "description": "Specify the name of an existing VNet in the same resource group"
       }
     },
     "existingSubnetName": {
-      "type": "String",
-      "defaultValue": "intranet-b"
+      "type": "string",
+      "defaultValue": "intranet-b",
       "metadata": {
         "description": "Specify the name of the Subnet Name"
       }
     },
     "imageOffer": {
-      "type": "String",
+      "type": "string",
       "allowedValues": [
         "sql2017-ws2019",
         "SQL2017-WS2016",
@@ -58,7 +58,7 @@
       }
     },
     "sqlSku": {
-      "type": "String",
+      "type": "string",
       "allowedValues": [
         "Standard",
         "Enterprise",
@@ -86,7 +86,7 @@
       }
     },
     "storageWorkloadType": {
-      "type": "String",
+      "type": "string",
       "allowedValues": [
         "General",
         "OLTP",
@@ -107,7 +107,7 @@
       }
     },
     "dataPath": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "F:\\SQLData",
       "metadata": {
         "description": "Path for SQL Data files. Please choose drive letter from F to Z, and other drives from A to E are reserved for system"
@@ -123,7 +123,7 @@
       }
     },
     "logPath": {
-      "type": "String",
+      "type": "string",
       "defaultValue": "G:\\SQLLog",
       "metadata": {
         "description": "Path for SQL Log files. Please choose drive letter from F to Z and different than the one used for SQL data. Drive letter from A to E are reserved for system"
@@ -206,7 +206,7 @@
         },
         "storageProfile": {
           "osDisk": {
-            "createOption": "fromImage",
+            "createOption": "FromImage",
             "managedDisk": {
               "storageAccountType": "Premium_LRS"
             }
@@ -285,7 +285,7 @@
   ],
   "outputs": {
     "adminUsername": {
-      "type": "String",
+      "type": "string",
       "value": "[parameters('adminUsername')]"
     }
   }
