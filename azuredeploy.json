@@ -71,6 +71,13 @@
         "description": "SQL Server Sku"
       }
     },
+    "sqlImageVersion": {
+      "type": "string",
+      "defaultValue": "14.1.200114",
+      "metadata": {
+        "description": "SQL Server VM image version, if not sure use latest or browse your self https://docs.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage"
+      }
+    },
     "adminUsername": {
       "type": "string",
       "defaultValue": "adm_gavea",
@@ -317,7 +324,7 @@
             "publisher": "MicrosoftSQLServer",
             "offer": "[parameters('imageOffer')]",
             "sku": "[parameters('sqlSku')]",
-            "version": "latest"
+            "version": "[parameters('sqlImageVersion')]"
           },
           "copy": [
             {
