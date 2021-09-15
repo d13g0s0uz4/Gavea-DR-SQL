@@ -272,7 +272,8 @@
       "caching": "ReadOnly",
       "writeAcceleratorEnabled": false,
       "storageAccountType": "Premium_LRS",
-      "diskSizeGB": 1023
+      "diskSizeGB": 1023,
+      "burstingEnabled": "true"
     },
     "tempDbPath":  "D:\\TEMPDB",
     "scriptFolder": ".",
