@@ -73,7 +73,7 @@
     },
     "sqlImageVersion": {
       "type": "string",
-      "defaultValue": "14.1.210608",
+      "defaultValue": "latest",
       "metadata": {
         "description": "SQL Server VM image version, if not sure use latest or browse your self https://docs.microsoft.com/en-us/azure/virtual-machines/windows/cli-ps-findimage"
       }
